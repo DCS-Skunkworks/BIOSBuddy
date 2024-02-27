@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<Nullable>disable</Nullable>
+		<UseWPF>true</UseWPF>
+		<AssemblyName>BIOSBuddy</AssemblyName>
+		<PackageIcon>FlightPanels01.png</PackageIcon>
+		<ApplicationIcon>Images\BIOSBuddy.ico</ApplicationIcon>
+		<PackageProjectUrl>https://github.com/DCS-Skunkworks/BIOSBuddy</PackageProjectUrl>
+		<Description>DCS-BIOS Buddy</Description>
+		<Company>DCS-Skunkworks</Company>
+		<AssemblyVersion>1.15.10</AssemblyVersion>
+		<StartupObject>BIOSBuddy.App</StartupObject>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<SelfContained>false</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="dcs-bios_modules.txt" />
+		<None Remove="Images\112_RefreshArrow_Green_32x32_72.png" />
+		<None Remove="Images\arduino_logo_simple.png" />
+		<None Remove="Images\clear_search_result.png" />
+		<None Remove="Images\FlightPanels01.png" />
+		<None Remove="Images\FlightPanels01_128.png" />
+		<None Remove="Images\flightpanels02_8Rc_icon.ico" />
+		<None Remove="Images\gear-image.png" />
+		<None Remove="Images\search_controls.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Images\BIOSBuddy.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="NLog" Version="5.2.8" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="dcs-bios_modules.txt">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Resource Include="Images\112_RefreshArrow_Green_32x32_72.png" />
+		<Resource Include="Images\clear_search_result.png" />
+		<Resource Include="Images\FlightPanels01.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</Resource>
+		<Resource Include="Images\FlightPanels01_128.png" />
+		<Resource Include="Images\gear-image.png" />
+		<Resource Include="Images\search_controls.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="NLog.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="dll\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="ClassLibraryCommon">
+			<HintPath>dll\ClassLibraryCommon.dll</HintPath>
+		</Reference>
+		<Reference Include="DCS-BIOS">
+			<HintPath>dll\DCS-BIOS.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>

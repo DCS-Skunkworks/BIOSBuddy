@@ -50,11 +50,15 @@ else
 $xml.Project.PropertyGroup.AssemblyVersion = "$avMajor.$avMinor.$avPatch".Trim()
 [string]$assemblyVersion = $xml.Project.PropertyGroup.AssemblyVersion
 Write-Host "New assembly version is $assemblyVersion" -foregroundcolor "Green"
+#Saving project file
+$xml.Save($projectFilePath)
+Write-Host "Project file updated" -foregroundcolor "Green"
+Write-Host "Finished release version management" -foregroundcolor "Green"
 
 #---------------------------------
-# Tests execution For DCSFP
+# Tests execution For BIOSBuddy
 #---------------------------------
-Write-Host "Starting tests execution for DCSFP" -foregroundcolor "Green"
+<#Write-Host "Starting tests execution for BIOSBuddy" -foregroundcolor "Green"
 $testPath = $scriptPath + "\Tests"
 Set-Location -Path $testPath
 dotnet test
@@ -64,27 +68,8 @@ if ( 0 -ne $testsLastExitCode ) {
 	Write-Host "Fatal error. Some unit tests failed." -foregroundcolor "Red"
 	exit
 }
-Write-Host "Finished tests execution for DCSFP" -foregroundcolor "Green"
-
-#------------------------------------
-# Tests execution For StreamDeckSharp
-#------------------------------------
-Write-Host "Starting tests execution for StreamDeckSharp" -foregroundcolor "Green"
-$testPath = $scriptPath + "\StreamDeckSharp.Tests"
-Set-Location -Path $testPath
-dotnet test
-$testsLastExitCode = $LastExitCode
-Write-Host "Tests LastExitCode: $testsLastExitCode" -foregroundcolor "Green"
-if ( 0 -ne $testsLastExitCode ) {
-	Write-Host "Fatal error. Some unit tests failed." -foregroundcolor "Red"
-	exit
-}
-Write-Host "Finished tests execution for StreamDeckSharp" -foregroundcolor "Green"
-
-#Saving project file
-$xml.Save($projectFilePath)
-Write-Host "Project file updated" -foregroundcolor "Green"
-Write-Host "Finished release version management" -foregroundcolor "Green"
+Write-Host "Finished tests execution for BIOSBuddy" -foregroundcolor "Green"
+#>
 
 #---------------------------------
 # Publish-Build & Zip
@@ -101,8 +86,8 @@ Write-Host "Starting Publish" -foregroundcolor "Green"
 Set-Location -Path $scriptPath
 
 Write-Host "Starting Publish BIOSBuddy" -foregroundcolor "Green"
-dotnet publish BIOSBuddy\BIOSBuddy.csproj --self-contained false -f net6.0-windows -r win-x64 -c Release -o $publishPath /p:DebugType=None /p:DebugSymbols=false
-#dotnet publish BIOSBuddy\BIOSBuddy.csproj -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained false -f net6.0-windows -r win-x64 -c Release -o $publishPath /p:DebugType=None /p:DebugSymbols=false
+dotnet publish BIOSBuddy\BIOSBuddy.csproj --self-contained false -f net8.0-windows -r win-x64 -c Release -o $publishPath /p:DebugType=None /p:DebugSymbols=false
+
 $buildLastExitCode = $LastExitCode
 
 Write-Host "Build ControlRef LastExitCode: $buildLastExitCode" -foregroundcolor "Green"

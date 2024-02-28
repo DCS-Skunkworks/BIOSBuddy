@@ -25,6 +25,7 @@ using NLog.Targets.Wrappers;
 using NLog.Targets;
 using DCS_BIOS.Serialized;
 using DCS_BIOS.ControlLocator;
+using System.Reflection;
 
 namespace BIOSBuddy
 {
@@ -106,6 +107,8 @@ namespace BIOSBuddy
                 {
                     return;
                 }
+
+                ShowVersionInfo();
 
                 Top = Settings.Default.MainWindowTop; 
                 Left = Settings.Default.MainWindowLeft;
@@ -776,6 +779,19 @@ namespace BIOSBuddy
             try
             {
                 MessageBox.Show("CTRL + F => Search in module\nCTRL + SHIFT + F => Search in all modules");
+            }
+            catch (Exception ex)
+            {
+                Common.ShowErrorMessageBox(ex);
+            }
+        }
+        
+        private void ShowVersionInfo()
+        {
+            try
+            {
+                var fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+                LabelStatusBarLeftInformation.Text = $"BIOSBuddy v{fileVersionInfo.FileVersion}";
             }
             catch (Exception ex)
             {

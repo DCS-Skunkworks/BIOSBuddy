@@ -42,6 +42,8 @@
     <Content Include="dcs-bios_modules.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <ProjectReference Include="..\DCSFPCommon\src\ClassLibraryCommon\ClassLibraryCommon.csproj" />
+    <ProjectReference Include="..\DCSFPCommon\src\DCS-BIOS\DCS-BIOS.csproj" />
     <Resource Include="Images\112_RefreshArrow_Green_32x32_72.png" />
     <Resource Include="Images\clear_search_result.png" />
     <Resource Include="Images\FlightPanels01.png">
@@ -67,16 +69,5 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="dll\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="ClassLibraryCommon">
-      <HintPath>dll\ClassLibraryCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="DCS-BIOS">
-      <HintPath>dll\DCS-BIOS.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

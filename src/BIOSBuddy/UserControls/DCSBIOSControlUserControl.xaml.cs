@@ -695,6 +695,7 @@ namespace BIOSBuddy.UserControls
                             throw new ArgumentOutOfRangeException(nameof(inputInterface.Interface));
                     }
                 }
+                SetFormState();
             }
             catch (Exception ex)
             {

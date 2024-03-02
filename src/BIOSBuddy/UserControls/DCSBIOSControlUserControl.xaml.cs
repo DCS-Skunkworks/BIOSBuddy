@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Media;
 using System.Threading;
@@ -85,7 +86,9 @@ namespace BIOSBuddy.UserControls
                 ButtonSetString.IsEnabled = !string.IsNullOrEmpty(TextBoxSetStringValue.Text);
                 ButtonSetVariableIncrease.IsEnabled = ButtonSetVariableStep.IsEnabled;
                 ButtonSetVariableDecrease.IsEnabled = ButtonSetVariableStep.IsEnabled;
-                ButtonSendData.IsEnabled = _textBoxDataFocused && !string.IsNullOrEmpty(TextBoxDataToSend.Text);
+                LabelShowSendData.Visibility = _dcsbiosControl.Inputs.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                ButtonSendData.IsEnabled = _textBoxDataFocused && !string.IsNullOrEmpty(TextBoxDataToSend.Text) && _dcsbiosControl.Inputs.Count > 0;
+                
                 ComboBoxSendDelay.IsEnabled = ButtonSendData.IsEnabled && !_sendDataArrayRunning;
                 LabelDelay.IsEnabled = ButtonSendData.IsEnabled;
             }
@@ -120,7 +123,7 @@ namespace BIOSBuddy.UserControls
             try
             {
                 Dispatcher?.BeginInvoke((Action)(() => LabelCurrentUIntValue.Content = Convert.ToString(value)));
-                
+
                 // Setting this will interfere when user is setting its own value, if the update cycle is fast the user
                 // won't be able to test at all
                 // Dispatcher?.BeginInvoke((Action)(() => SetSliderValue(value)));
@@ -197,20 +200,21 @@ namespace BIOSBuddy.UserControls
 
                 foreach (var dcsbiosControlInput in _dcsbiosControl.Inputs)
                 {
-                    switch (dcsbiosControlInput.ControlInterface)
+                    var inputInterface = dcsbiosControlInput.GetInputInterface(_dcsbiosControl.Identifier);
+                    switch (inputInterface.Interface)
                     {
-                        case "fixed_step":
+                        case DCSBIOSInputType.FIXED_STEP:
                             {
                                 StackPanelFixedStep.Visibility = Visibility.Visible;
                                 break;
                             }
-                        case "variable_step":
+                        case DCSBIOSInputType.VARIABLE_STEP:
                             {
                                 StackPanelVariableStep.Visibility = Visibility.Visible;
                                 TextBoxVariableStepValue.Text = dcsbiosControlInput.SuggestedStep.ToString();
                                 break;
                             }
-                        case "set_state":
+                        case DCSBIOSInputType.SET_STATE:
                             {
                                 StackPanelSetState.Visibility = Visibility.Visible;
                                 SliderSetState.Minimum = 0;
@@ -219,12 +223,12 @@ namespace BIOSBuddy.UserControls
                                 SliderSetState.Value = 0;
                                 break;
                             }
-                        case "action":
+                        case DCSBIOSInputType.ACTION:
                             {
                                 StackPanelAction.Visibility = Visibility.Visible;
                                 break;
                             }
-                        case "set_string":
+                        case DCSBIOSInputType.SET_STRING:
                             {
                                 StackPanelSetString.Visibility = Visibility.Visible;
                                 break;
@@ -312,7 +316,7 @@ namespace BIOSBuddy.UserControls
                 Common.ShowErrorMessageBox(ex);
             }
         }
-        
+
         private void LabelControlDescription_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             try
@@ -644,6 +648,53 @@ namespace BIOSBuddy.UserControls
 
                 TextBoxDataToSend.Text = "";
                 _textBoxDataFocused = true;
+
+                foreach (var dcsbiosInput in _dcsbiosControl.Inputs)
+                {
+                    var inputInterface = dcsbiosInput.GetInputInterface(_dcsbiosControl.Identifier);
+                    switch (inputInterface.Interface)
+                    {
+                        case DCSBIOSInputType.FIXED_STEP:
+                            {
+                                TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} {DCSBIOSFixedStepInput.INC}\n";
+                                TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} {DCSBIOSFixedStepInput.DEC}\n";
+                                break;
+                            }
+                        case DCSBIOSInputType.SET_STATE:
+                            {
+                                if (inputInterface.MaxValue > 10)
+                                {
+                                    TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} {0}\n";
+                                    TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} {inputInterface.MaxValue/2}\n";
+                                    TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} {inputInterface.MaxValue}\n";
+                                    break;
+                                }
+                                for (var i = 0; i <= inputInterface.MaxValue; i++)
+                                {
+                                    TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} {i}\n";
+                                }
+                                break;
+                            }
+                        case DCSBIOSInputType.ACTION:
+                            {
+                                TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} TOGGLE\n";
+                                break;
+                            }
+                        case DCSBIOSInputType.VARIABLE_STEP:
+                            {
+                                TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} +3200\n";
+                                TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} -3200\n";
+                                break;
+                            }
+                        case DCSBIOSInputType.SET_STRING:
+                            {
+                                TextBoxDataToSend.Text += $"{_dcsbiosControl.Identifier} ABCDEF\n";
+                                break;
+                            }
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(inputInterface.Interface));
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -659,7 +710,7 @@ namespace BIOSBuddy.UserControls
                 var commandArray = commands.Split('\n', StringSplitOptions.RemoveEmptyEntries);
                 foreach (var command in commandArray)
                 {
-                    Dispatcher?.Invoke(() => TextBoxExecutedCommand.Text = command.Replace("\n","").Replace("\r",""));
+                    Dispatcher?.Invoke(() => TextBoxExecutedCommand.Text = command.Replace("\n", "").Replace("\r", ""));
                     DCSBIOS.Send(command + "\n");
                     Dispatcher?.Invoke(SetFormState);
                     Thread.Sleep(delay);

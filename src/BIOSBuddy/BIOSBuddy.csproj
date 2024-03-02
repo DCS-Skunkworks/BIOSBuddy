@@ -21,7 +21,6 @@
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="dcs-bios_modules.txt" />
     <None Remove="Images\112_RefreshArrow_Green_32x32_72.png" />
     <None Remove="Images\arduino_logo_simple.png" />
     <None Remove="Images\clear_search_result.png" />
@@ -39,9 +38,6 @@
     <PackageReference Include="NLog" Version="5.2.8" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dcs-bios_modules.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <ProjectReference Include="..\DCSFPCommon\src\ClassLibraryCommon\ClassLibraryCommon.csproj" />
     <ProjectReference Include="..\DCSFPCommon\src\DCS-BIOS\DCS-BIOS.csproj" />
     <Resource Include="Images\112_RefreshArrow_Green_32x32_72.png" />

@@ -2,6 +2,8 @@
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $publishPath = $scriptPath + "\_PublishTemp_\"
 
+$changeVersion = Read-Host "Change version? Y/N"
+
 #---------------------------------
 # Pre-checks
 #---------------------------------
@@ -22,38 +24,38 @@ If (-not(Test-Path $projectFilePath)) {
 	exit
 }
 
-#Reading BIOSBuddy project file
-$xml = [xml](Get-Content $projectFilePath)
-[string]$assemblyVersion = $xml.Project.PropertyGroup.AssemblyVersion
+if ($changeVersion.Trim().ToLower().Equals("y")) {
+	#Reading BIOSBuddy project file
+	$xml = [xml](Get-Content $projectFilePath)
+	[string]$assemblyVersion = $xml.Project.PropertyGroup.AssemblyVersion
 
-#Split the Version Numbers
-$avMajor, $avMinor, $avPatch = $assemblyVersion.Split('.')
+	#Split the Version Numbers
+	$avMajor, $avMinor, $avPatch = $assemblyVersion.Split('.')
 
-Write-Host "Current assembly version is: $assemblyVersion" -foregroundcolor "Green"
-Write-Host "Current Minor version is: $avMinor" -foregroundcolor "Green"
+	Write-Host "Current assembly version is: $assemblyVersion" -foregroundcolor "Green"
+	Write-Host "Current Minor version is: $avMinor" -foregroundcolor "Green"
 
-#Sets new version into Project 
-#Warning: for this to work, since the PropertyGroup is indexed, AssemblyVersion must be in the FIRST Propertygroup (or else, change the index).
-Write-Host "What kind of release is this? If not minor then patch version will be incremented." -foregroundcolor "Green"
-$isMinorRelease = Read-Host "Minor release? Y/N"
+	#Sets new version into Project 
+	#Warning: for this to work, since the PropertyGroup is indexed, AssemblyVersion must be in the FIRST Propertygroup (or else, change the index).
+	Write-Host "What kind of release is this? If not minor then patch version will be incremented." -foregroundcolor "Green"
+	$isMinorRelease = Read-Host "Minor release? Y/N"
 
-if($isMinorRelease.Trim().ToLower().Equals("y"))
-{
-    [int]$avMinor = [int]$avMinor + 1
-	[int]$avPatch = 0
+	if ($isMinorRelease.Trim().ToLower().Equals("y")) {
+		[int]$avMinor = [int]$avMinor + 1
+		[int]$avPatch = 0
+	}
+	else {
+		[int]$avPatch = [int]$avPatch + 1
+	}
+
+	$xml.Project.PropertyGroup.AssemblyVersion = "$avMajor.$avMinor.$avPatch".Trim()
+	[string]$assemblyVersion = $xml.Project.PropertyGroup.AssemblyVersion
+	Write-Host "New assembly version is $assemblyVersion" -foregroundcolor "Green"
+	#Saving project file
+	$xml.Save($projectFilePath)
+	Write-Host "Project file updated" -foregroundcolor "Green"
+	Write-Host "Finished release version management" -foregroundcolor "Green"
 }
-else
-{
-    [int]$avPatch = [int]$avPatch + 1
-}
-
-$xml.Project.PropertyGroup.AssemblyVersion = "$avMajor.$avMinor.$avPatch".Trim()
-[string]$assemblyVersion = $xml.Project.PropertyGroup.AssemblyVersion
-Write-Host "New assembly version is $assemblyVersion" -foregroundcolor "Green"
-#Saving project file
-$xml.Save($projectFilePath)
-Write-Host "Project file updated" -foregroundcolor "Green"
-Write-Host "Finished release version management" -foregroundcolor "Green"
 
 #---------------------------------
 # Tests execution For BIOSBuddy

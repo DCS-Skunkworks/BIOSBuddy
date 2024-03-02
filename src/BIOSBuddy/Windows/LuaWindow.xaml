@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:customControls="clr-namespace:BIOSBuddy.CustomControls"
         mc:Ignorable="d"
-        Title="" Height="400" Width="Auto"
+        Title="Lua code" Height="400" Width="Auto"
         Loaded="LuaWindow_OnLoaded"
         WindowStartupLocation="CenterScreen" 
         KeyDown="LuaWindow_OnKeyDown" KeyUp="LuaWindow_OnKeyUp" Icon="/Images/FlightPanels01.png">

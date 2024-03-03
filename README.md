@@ -12,9 +12,10 @@ For debugging and testing your DCS-BIOS controls.
 
 ![b2](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/8da5620d-6599-4a2e-b9f8-fa7ddb11fa85)
 
-![b3](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/b7af322e-816b-40f5-a025-31714bd5880d)
+![lua](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/e773e4b8-03dd-4609-8faa-d6ecbba32513)
 
-![b4](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/bcfd3747-2454-40db-adcc-0bbc537ab3db)
+![arduino](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/431cb5f3-109d-4659-93f7-354f1cfcaad0)
+
 
 ![b5](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/1bd88283-d5f2-416e-b70a-489136d19636)
 

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyVersion>1.0.4</AssemblyVersion>
     <OutputType>WinExe</OutputType>
@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>BIOSBuddy</AssemblyName>
-    <PackageIcon>FlightPanels01.png</PackageIcon>
+    <PackageIcon>biosbuddy_logo2.png</PackageIcon>
     <ApplicationIcon>Images\BIOSBuddy.ico</ApplicationIcon>
     <PackageProjectUrl>https://github.com/DCS-Skunkworks/BIOSBuddy</PackageProjectUrl>
     <Description>DCS-BIOS Buddy</Description>
@@ -23,10 +23,8 @@
   <ItemGroup>
     <None Remove="Images\112_RefreshArrow_Green_32x32_72.png" />
     <None Remove="Images\arduino_logo_simple.png" />
+    <None Remove="Images\biosbuddy_logo2.png" />
     <None Remove="Images\clear_search_result.png" />
-    <None Remove="Images\FlightPanels01.png" />
-    <None Remove="Images\FlightPanels01_128.png" />
-    <None Remove="Images\flightpanels02_8Rc_icon.ico" />
     <None Remove="Images\gear-image.png" />
     <None Remove="Images\search_controls.png" />
   </ItemGroup>
@@ -41,12 +39,8 @@
     <ProjectReference Include="..\DCSFPCommon\src\ClassLibraryCommon\ClassLibraryCommon.csproj" />
     <ProjectReference Include="..\DCSFPCommon\src\DCS-BIOS\DCS-BIOS.csproj" />
     <Resource Include="Images\112_RefreshArrow_Green_32x32_72.png" />
+    <Resource Include="Images\biosbuddy_logo2.png" />
     <Resource Include="Images\clear_search_result.png" />
-    <Resource Include="Images\FlightPanels01.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </Resource>
-    <Resource Include="Images\FlightPanels01_128.png" />
     <Resource Include="Images\gear-image.png" />
     <Resource Include="Images\search_controls.png" />
   </ItemGroup>

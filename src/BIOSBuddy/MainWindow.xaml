@@ -14,7 +14,7 @@
         SizeChanged="MainWindow_OnSizeChanged"
         WindowStartupLocation="Manual"
         KeyDown="MainWindow_OnKeyDown"
-        Icon="/BIOSBuddy;component/Images/FlightPanels01.png" >
+        Icon="/BIOSBuddy;component/Images/biosbuddy_logo2.png" >
 
     <Grid >
         <Grid.RowDefinitions>

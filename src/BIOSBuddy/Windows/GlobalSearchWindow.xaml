@@ -8,7 +8,7 @@
         Title="Search in all dcs-bios modules" Height="500" Width="600"
         Loaded="GlobalSearchWindow_OnLoaded"
         WindowStartupLocation="CenterOwner" 
-        KeyDown="GlobalSearchWindow_OnKeyDown" KeyUp="GlobalSearchWindow_OnKeyUp" Icon="/Images/biosbuddy_logo2.png">
+        KeyDown="GlobalSearchWindow_OnKeyDown" KeyUp="GlobalSearchWindow_OnKeyUp" Icon="/Images/buddy_logo3.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />

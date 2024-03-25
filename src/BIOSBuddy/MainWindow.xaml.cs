@@ -40,7 +40,6 @@ namespace BIOSBuddy
         private readonly List<DCSBIOSControlUserControl> _dcsbiosUIControlPanels = new();
         private DCSBIOS _dcsBios;
         private bool _formLoaded;
-        private const int MAX_CONTROLS_ON_PAGE = 70;
         private DCSBIOSOutput _dcsbiosVersionOutput;
         private bool _checkDCSBIOSVersionOnce;
         private List<DCSBIOSControl> _metaControls;
@@ -309,14 +308,6 @@ namespace BIOSBuddy
         {
             var categoriesList = _loadedControls.Select(o => o.Category).DistinctBy(o => o).ToList();
 
-            if (_loadedControls.Count() <= MAX_CONTROLS_ON_PAGE)
-            {
-                /*
-                 * If there aren't many controls to show then allow the user to show
-                 * all categories at once.
-                 */
-                categoriesList.Insert(0, "All");
-            }
             ComboBoxCategory.DataContext = categoriesList;
             ComboBoxCategory.ItemsSource = categoriesList;
             ComboBoxCategory.Items.Refresh();
@@ -432,7 +423,7 @@ namespace BIOSBuddy
                     /*
                      * Limit only on category if user is not searching
                      */
-                    if (string.IsNullOrEmpty(searchText) && ComboBoxCategory.SelectedValue != null && ComboBoxCategory.SelectedValue.ToString() != "All")
+                    if (string.IsNullOrEmpty(searchText) && ComboBoxCategory.SelectedValue != null)
                     {
                         filteredControls = _loadedControls.Where(o => o.Category == ComboBoxCategory.SelectedValue.ToString())
                             .ToList();
@@ -444,13 +435,7 @@ namespace BIOSBuddy
                         filteredControls = _loadedControls.Where(o => o.Description.ToLower().Contains(searchWord) || o.Identifier.ToLower().Contains(searchWord))
                             .ToList();
                     }
-
-                    if (filteredControls.Count() > MAX_CONTROLS_ON_PAGE)
-                    {
-                        Common.ShowMessageBox($"Query returned {filteredControls.Count()} DCS-BIOS Controls. Max controls that can be displayed at any time is {MAX_CONTROLS_ON_PAGE}.");
-                        return;
-                    }
-
+                    
                     foreach (var dcsbiosControl in filteredControls)
                     {
                         var luaCommand = DCSBIOSControlLocator.GetLuaCommand(dcsbiosControl.Identifier, true);

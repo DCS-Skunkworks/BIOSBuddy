@@ -12,7 +12,7 @@ namespace BIOSBuddy.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -158,12 +158,36 @@ namespace BIOSBuddy.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
-        public int LastProfileID {
+        public int LastModuleOpen {
             get {
-                return ((int)(this["LastProfileID"]));
+                return ((int)(this["LastModuleOpen"]));
             }
             set {
-                this["LastProfileID"] = value;
+                this["LastModuleOpen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\"\"")]
+        public string LastCategoryOpen {
+            get {
+                return ((string)(this["LastCategoryOpen"]));
+            }
+            set {
+                this["LastCategoryOpen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double ScrollViewerVerticalOffset {
+            get {
+                return ((double)(this["ScrollViewerVerticalOffset"]));
+            }
+            set {
+                this["ScrollViewerVerticalOffset"] = value;
             }
         }
     }

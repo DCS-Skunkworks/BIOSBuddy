@@ -58,7 +58,7 @@
             </Button>
         </ToolBar>
 
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Name="ScrollViewerControls" Grid.Row="2" VerticalScrollBarVisibility="Auto"  Loaded="ScrollViewerControls_OnLoaded">
             <ItemsControl Name="ItemsControlControls" />
         </ScrollViewer>
 

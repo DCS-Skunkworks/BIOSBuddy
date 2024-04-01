@@ -26,6 +26,7 @@ using NLog.Targets;
 using DCS_BIOS.Serialized;
 using DCS_BIOS.ControlLocator;
 using System.Reflection;
+using System.Windows.Media;
 
 namespace BIOSBuddy
 {
@@ -44,7 +45,9 @@ namespace BIOSBuddy
         private bool _checkDCSBIOSVersionOnce;
         private List<DCSBIOSControl> _metaControls;
         private bool _changeOfModuleActive;
-        private bool _showLastProfile = true;
+        private bool _showLastModule = true;
+        private bool _showLastCategory = true;
+        private bool _showLastControlVisible = true;
 
         public MainWindow()
         {
@@ -56,7 +59,7 @@ namespace BIOSBuddy
             /*
              * Correct JSON folder path, move away from $USERDIRECTORY$.
              */
-            Settings.Default.DCSBiosJSONLocation = Environment.ExpandEnvironmentVariables(Settings.Default.DCSBiosJSONLocation.Contains("$USERDIRECTORY$") ? 
+            Settings.Default.DCSBiosJSONLocation = Environment.ExpandEnvironmentVariables(Settings.Default.DCSBiosJSONLocation.Contains("$USERDIRECTORY$") ?
                 Settings.Default.DCSBiosJSONLocation.Replace("$USERDIRECTORY$", "%userprofile%") : Settings.Default.DCSBiosJSONLocation);
             Settings.Default.Save();
 
@@ -109,7 +112,7 @@ namespace BIOSBuddy
 
                 ShowVersionInfo();
 
-                Top = Settings.Default.MainWindowTop; 
+                Top = Settings.Default.MainWindowTop;
                 Left = Settings.Default.MainWindowLeft;
                 Height = Settings.Default.MainWindowHeight;
                 Width = Settings.Default.MainWindowWidth;
@@ -220,10 +223,10 @@ namespace BIOSBuddy
                 return;
             }
 
-            _dcsBios = new DCSBIOS(Settings.Default.DCSBiosIPFrom, 
-                Settings.Default.DCSBiosIPTo, 
-                int.Parse(Settings.Default.DCSBiosPortFrom), 
-                int.Parse(Settings.Default.DCSBiosPortTo), 
+            _dcsBios = new DCSBIOS(Settings.Default.DCSBiosIPFrom,
+                Settings.Default.DCSBiosIPTo,
+                int.Parse(Settings.Default.DCSBiosPortFrom),
+                int.Parse(Settings.Default.DCSBiosPortTo),
                 DcsBiosNotificationMode.Parse);
             if (!_dcsBios.HasLastException())
             {
@@ -284,34 +287,43 @@ namespace BIOSBuddy
                 return;
             }
 
-            var found = false;
+            var index = -1;
             ComboBoxModules.DataContext = DCSAircraft.Modules;
             ComboBoxModules.ItemsSource = DCSAircraft.Modules;
             ComboBoxModules.Items.Refresh();
-            if (_showLastProfile)
+            if (_showLastModule)
             {
-                foreach (var module in DCSAircraft.Modules)
+                foreach (var module in DCSAircraft.Modules.Where(o => o.ID == Settings.Default.LastModuleOpen))
                 {
-                    if (module.ID != Settings.Default.LastProfileID) continue;
-
-                    ComboBoxModules.SelectedIndex = DCSAircraft.Modules.IndexOf(module);
-                    found = true;
+                    index = DCSAircraft.Modules.IndexOf(module);
+                    break;
                 }
-                _showLastProfile = false;
+                _showLastModule = false;
             }
 
-            if (!found) ComboBoxModules.SelectedIndex = 0;
-            UpdateComboBoxCategories();
+            ComboBoxModules.SelectedIndex = index >= 0 ? index : 0;
         }
 
         private void UpdateComboBoxCategories()
         {
             var categoriesList = _loadedControls.Select(o => o.Category).DistinctBy(o => o).ToList();
 
+            var found = false;
             ComboBoxCategory.DataContext = categoriesList;
             ComboBoxCategory.ItemsSource = categoriesList;
             ComboBoxCategory.Items.Refresh();
-            ComboBoxCategory.SelectedIndex = 0;
+
+            if (_showLastCategory)
+            {
+                if (ComboBoxCategory.Items.Contains(Settings.Default.LastCategoryOpen))
+                {
+                    found = true;
+                    ComboBoxCategory.SelectedItem = Settings.Default.LastCategoryOpen;
+                }
+                _showLastCategory = false;
+            }
+
+            if (!found) ComboBoxCategory.SelectedIndex = 0;
         }
 
         private void ComboBoxModules_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -328,7 +340,7 @@ namespace BIOSBuddy
                     }
 
                     var selectedModule = (DCSAircraft)ComboBoxModules.SelectedItem;
-                    Settings.Default.LastProfileID = selectedModule.ID;
+                    Settings.Default.LastModuleOpen = selectedModule.ID;
                     Settings.Default.Save();
                     DCSBIOSControlLocator.DCSAircraft = selectedModule;
                     _loadedControls = DCSBIOSControlLocator.GetModuleControlsFromJson(selectedModule.JSONFilename);
@@ -344,7 +356,6 @@ namespace BIOSBuddy
                     }
                     UpdateComboBoxCategories();
                     _changeOfModuleActive = false;
-                    ShowControls();
                 }
                 catch (Exception ex)
                 {
@@ -363,6 +374,10 @@ namespace BIOSBuddy
             try
             {
                 TextBoxSearchControl.Text = "";
+                var selectedCategory = (string)ComboBoxCategory.SelectedItem;
+                Settings.Default.LastCategoryOpen = selectedCategory;
+                Settings.Default.Save();
+
                 ShowControls();
             }
             catch (Exception ex)
@@ -435,11 +450,16 @@ namespace BIOSBuddy
                         filteredControls = _loadedControls.Where(o => o.Description.ToLower().Contains(searchWord) || o.Identifier.ToLower().Contains(searchWord))
                             .ToList();
                     }
-                    
+
                     foreach (var dcsbiosControl in filteredControls)
                     {
                         var luaCommand = DCSBIOSControlLocator.GetLuaCommand(dcsbiosControl.Identifier, true);
-                        _dcsbiosUIControlPanels.Add(new DCSBIOSControlUserControl( dcsbiosControl, luaCommand));
+                        _dcsbiosUIControlPanels.Add(new DCSBIOSControlUserControl(dcsbiosControl, luaCommand));
+                    }
+
+                    if (filteredControls.Any())
+                    {
+                        ItemsControlControls.Focus();
                     }
 
                     ItemsControlControls.ItemsSource = null;
@@ -447,11 +467,6 @@ namespace BIOSBuddy
                     ItemsControlControls.ItemsSource = _dcsbiosUIControlPanels;
 
                     LabelStatusBarRightInformation.Text = $"{filteredControls.Count()} DCS-BIOS Controls loaded.";
-
-                    if (filteredControls.Any())
-                    {
-                        ItemsControlControls.Focus();
-                    }
 
                     UpdateSearchButton();
 
@@ -729,6 +744,7 @@ namespace BIOSBuddy
         {
             try
             {
+                SaveVisibleUserControl();
                 Settings.Default.MainWindowTop = Top;
                 Settings.Default.MainWindowLeft = Left;
                 Settings.Default.Save();
@@ -770,13 +786,59 @@ namespace BIOSBuddy
                 Common.ShowErrorMessageBox(ex);
             }
         }
-        
+
         private void ShowVersionInfo()
         {
             try
             {
                 var fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
                 LabelStatusBarLeftInformation.Text = $"BIOSBuddy v{fileVersionInfo.FileVersion}";
+            }
+            catch (Exception ex)
+            {
+                Common.ShowErrorMessageBox(ex);
+            }
+        }
+
+        private bool IsUserControlVisibleInScrollViewer(UserControl userControl, ScrollViewer scrollViewer)
+        {
+            // Get the bounds of the UserControl
+            var controlBounds = userControl.TransformToAncestor(scrollViewer)
+                .TransformBounds(new Rect(0.0, 0.0, userControl.ActualWidth, userControl.ActualHeight));
+
+            // Get the visible region of the ScrollViewer
+            var visibleRegion = new Rect(scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset, scrollViewer.ViewportWidth, scrollViewer.ViewportHeight);
+
+            // Check if the UserControl is within the visible region of the ScrollViewer
+            return visibleRegion.IntersectsWith(controlBounds);
+        }
+
+        private void SaveVisibleUserControl()
+        {
+            foreach (UserControl userControl in ItemsControlControls.Items)
+            {
+                if (!IsUserControlVisibleInScrollViewer(userControl, ScrollViewerControls)) continue;
+
+                Settings.Default.ScrollViewerVerticalOffset = ScrollViewerControls.VerticalOffset;
+                Settings.Default.Save();
+
+                break;
+            }
+        }
+
+        private void ScrollViewerControls_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!_showLastControlVisible) return;
+
+                ItemsControlControls.UpdateLayout();
+                ScrollViewerControls.UpdateLayout();
+                if (Settings.Default.ScrollViewerVerticalOffset < ScrollViewerControls.ScrollableHeight)
+                {
+                    ScrollViewerControls.ScrollToVerticalOffset(Settings.Default.ScrollViewerVerticalOffset);
+                }
+                _showLastControlVisible = false;
             }
             catch (Exception ex)
             {

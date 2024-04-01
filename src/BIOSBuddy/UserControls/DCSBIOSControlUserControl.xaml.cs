@@ -38,6 +38,7 @@ namespace BIOSBuddy.UserControls
         {
             InitializeComponent();
 
+            Name = dcsbiosControl.Identifier;
             _dcsbiosControl = dcsbiosControl;
             _luaCommand = luaCommand;
             foreach (var dcsbiosControlOutput in dcsbiosControl.Outputs)

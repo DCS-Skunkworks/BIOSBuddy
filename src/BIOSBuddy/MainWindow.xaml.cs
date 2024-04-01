@@ -800,30 +800,10 @@ namespace BIOSBuddy
             }
         }
 
-        private bool IsUserControlVisibleInScrollViewer(UserControl userControl, ScrollViewer scrollViewer)
-        {
-            // Get the bounds of the UserControl
-            var controlBounds = userControl.TransformToAncestor(scrollViewer)
-                .TransformBounds(new Rect(0.0, 0.0, userControl.ActualWidth, userControl.ActualHeight));
-
-            // Get the visible region of the ScrollViewer
-            var visibleRegion = new Rect(scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset, scrollViewer.ViewportWidth, scrollViewer.ViewportHeight);
-
-            // Check if the UserControl is within the visible region of the ScrollViewer
-            return visibleRegion.IntersectsWith(controlBounds);
-        }
-
         private void SaveVisibleUserControl()
         {
-            foreach (UserControl userControl in ItemsControlControls.Items)
-            {
-                if (!IsUserControlVisibleInScrollViewer(userControl, ScrollViewerControls)) continue;
-
-                Settings.Default.ScrollViewerVerticalOffset = ScrollViewerControls.VerticalOffset;
-                Settings.Default.Save();
-
-                break;
-            }
+            Settings.Default.ScrollViewerVerticalOffset = ScrollViewerControls.VerticalOffset;
+            Settings.Default.Save();
         }
 
         private void ScrollViewerControls_OnLoaded(object sender, RoutedEventArgs e)
@@ -834,6 +814,7 @@ namespace BIOSBuddy
 
                 ItemsControlControls.UpdateLayout();
                 ScrollViewerControls.UpdateLayout();
+
                 if (Settings.Default.ScrollViewerVerticalOffset < ScrollViewerControls.ScrollableHeight)
                 {
                     ScrollViewerControls.ScrollToVerticalOffset(Settings.Default.ScrollViewerVerticalOffset);

@@ -201,7 +201,7 @@ namespace BIOSBuddy.UserControls
 
                 foreach (var dcsbiosControlInput in _dcsbiosControl.Inputs)
                 {
-                    var inputInterface = dcsbiosControlInput.GetInputInterface(_dcsbiosControl.Identifier);
+                    var inputInterface = dcsbiosControlInput.GetInputInterface();
                     switch (inputInterface.Interface)
                     {
                         case DCSBIOSInputType.FIXED_STEP:
@@ -652,7 +652,7 @@ namespace BIOSBuddy.UserControls
 
                 foreach (var dcsbiosInput in _dcsbiosControl.Inputs)
                 {
-                    var inputInterface = dcsbiosInput.GetInputInterface(_dcsbiosControl.Identifier);
+                    var inputInterface = dcsbiosInput.GetInputInterface();
                     switch (inputInterface.Interface)
                     {
                         case DCSBIOSInputType.FIXED_STEP:

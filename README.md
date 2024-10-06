@@ -4,6 +4,9 @@
 [![GitHub release](https://img.shields.io/github/release/DCS-Skunkworks/BIOSBuddy.svg)](https://github.com/DCS-Skunkworks/BIOSBuddy/releases)
 [![Discord](https://img.shields.io/discord/533342958712258572)](https://discord.gg/5svGwKX)
 
+> [!CAUTION]
+> This project currently does not have a maintainer and is not receiving updates. If you're interested in contributing to or maintaining this project, please get in touch on Discord.
+
 DCS-BIOS Control Reference Application
 
 For debugging and testing your DCS-BIOS controls.
@@ -18,10 +21,3 @@ For debugging and testing your DCS-BIOS controls.
 
 
 ![b5](https://github.com/DCS-Skunkworks/BIOSBuddy/assets/10453261/1bd88283-d5f2-416e-b70a-489136d19636)
-
-
-
-
-
-
-
